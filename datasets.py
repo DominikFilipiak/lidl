@@ -5,6 +5,59 @@ from sklearn import datasets
 from sklearn.preprocessing import StandardScaler
 
 
+def sphere_dataset(
+        N: int,
+        dim: int,
+        ambient_dim: int,
+        radius: float,
+        seed=0,
+        ) -> np.array:
+    np.random.seed(seed)
+    assert ambient_dim > dim
+
+    x_out = np.zeros((N, ambient_dim))
+    x = np.random.normal(size=(N, dim + 1))
+    lam = np.sqrt(np.sum(x ** 2, axis=1, keepdims=True))
+    x = x / lam
+    x *= radius
+    x_out[:,:dim+1] = x
+    return x_out
+
+def gaussian_dataset(
+        N: int,
+        dim: int,
+        ambient_dim: int,
+        std: float,
+        seed=0,
+        ) -> np.array:
+    np.random.seed(seed)
+    assert ambient_dim >= dim
+
+    x_out = np.zeros((N, ambient_dim))
+    x = np.random.normal(size=(N, dim)) * std
+    x_out[:,:dim] = x
+    return x_out
+
+def gaussian_saw_dataset(
+        N: int,
+        dim: int,
+        ambient_dim: int,
+        std: float,
+        n_peaks: int,
+        seed=0,
+        ):
+    np.random.seed(seed)
+    assert ambient_dim >= dim
+
+    x_out = np.zeros((N, ambient_dim))
+    means = np.random.randint(low=0, high=n_peaks, size=N) / (n_peaks - 1)
+    x = np.random.normal(size=(N, dim)) * std + means.reshape(N, 1)
+    
+    # print(means.shape)
+    x_out[:,:dim] = x
+    return x_out
+
+
 def normalize(data):
     data -= data.mean(axis=0)
     data /= data.std() + 0.001

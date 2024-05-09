@@ -15,6 +15,7 @@ from nflows.transforms.permutations import ReversePermutation
 from sklearn.mixture import GaussianMixture
 from torch import optim
 from torch.utils.data import DataLoader
+from torch.utils.tensorboard import SummaryWriter
 
 
 def split_dataset(dataset, val_size):
@@ -126,8 +127,11 @@ class LLFlow:
         return flow
 
     # def run(self, data, samples, delta=0.05, test_size = 0.1, num_layers=10, lr=0.0001, epochs=10_000, device='cpu'):
-    def __call__(self, delta, dataset, test, verbose=False):
-        train, val = split_dataset(dataset, self.val_size)
+    def __call__(self, delta, dataset, val, test, verbose=False, log_dir=None):
+        # train, val = split_dataset(dataset, self.val_size)
+        writer = SummaryWriter(log_dir=log_dir)
+
+        train = dataset
         if test.shape[1] != dataset.shape[1]:
             raise ValueError(f"train and test datasets have different number of features: \
             train features: {dataset.shape[1]}, test features: {test.shape[1]}")
@@ -167,18 +171,21 @@ class LLFlow:
                 # validation loss for early stopping
                 val_loss = -flow.log_prob(inputs=val_tensor).mean()
                 losses.append(val_loss.detach().cpu().numpy())
+                writer.add_scalar("val/loss", val_loss, epoch)
 
                 # remember the results for early stopping
                 ll = -flow.log_prob(test_tensor)
+                writer.add_scalar("test/loss", ll.mean(), epoch)
                 results.append(ll.detach().cpu().numpy())
 
                 if val_loss < best_loss:
                     best_loss = val_loss
                     best_epoch = epoch
 
-                if (epoch - best_epoch) > round(self.epochs * 2 / 100):
+                if (epoch - best_epoch) > 20: #round(self.epochs * 2 / 100):
                     print(f"Stopping after {best_epoch} epochs")
                     return results[best_epoch], losses[best_epoch]
             if verbose: tq1.set_postfix_str(f"loss: {losses[best_epoch]}")
 
+        writer.close()
         return results[best_epoch], losses[best_epoch]

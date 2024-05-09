@@ -1,4 +1,5 @@
 import argparse
+from pathlib import Path
 import datasets
 from datasets import normalize
 from dim_estimators import mle_skl, corr_dim, LIDL, mle_inv
@@ -9,6 +10,38 @@ import json
 import time
 
 inputs = {
+    "aldi-sphere-20-21-0.1": lambda size, seed: datasets.sphere_dataset(size, dim=20, ambient_dim=21, radius=0.1, seed=seed),
+    "aldi-sphere-20-21-0.2": lambda size, seed: datasets.sphere_dataset(size, dim=20, ambient_dim=21, radius=0.2, seed=seed),
+    "aldi-sphere-20-21-0.4": lambda size, seed: datasets.sphere_dataset(size, dim=20, ambient_dim=21, radius=0.4, seed=seed),
+    "aldi-sphere-20-21-0.8": lambda size, seed: datasets.sphere_dataset(size, dim=20, ambient_dim=21, radius=0.8, seed=seed),
+    "aldi-sphere-20-40-0.1": lambda size, seed: datasets.sphere_dataset(size, dim=20, ambient_dim=40, radius=0.1, seed=seed),
+    "aldi-sphere-20-40-0.2": lambda size, seed: datasets.sphere_dataset(size, dim=20, ambient_dim=40, radius=0.2, seed=seed),
+    "aldi-sphere-20-40-0.4": lambda size, seed: datasets.sphere_dataset(size, dim=20, ambient_dim=40, radius=0.4, seed=seed),
+    "aldi-sphere-20-40-0.8": lambda size, seed: datasets.sphere_dataset(size, dim=20, ambient_dim=40, radius=0.8, seed=seed),
+    "aldi-gaussian-20-20-0.1": lambda size, seed: datasets.gaussian_dataset(size, dim=20, ambient_dim=20, std=0.1, seed=seed),
+    "aldi-gaussian-20-20-0.2": lambda size, seed: datasets.gaussian_dataset(size, dim=20, ambient_dim=20, std=0.2, seed=seed),
+    "aldi-gaussian-20-20-0.4": lambda size, seed: datasets.gaussian_dataset(size, dim=20, ambient_dim=20, std=0.4, seed=seed),
+    "aldi-gaussian-20-20-0.8": lambda size, seed: datasets.gaussian_dataset(size, dim=20, ambient_dim=20, std=0.8, seed=seed),
+    "aldi-gaussian-20-40-0.01": lambda size, seed: datasets.gaussian_dataset(size, dim=20, ambient_dim=40, std=0.01, seed=seed),
+    "aldi-gaussian-20-40-0.05": lambda size, seed: datasets.gaussian_dataset(size, dim=20, ambient_dim=40, std=0.05, seed=seed),
+    "aldi-gaussian-20-40-0.1": lambda size, seed: datasets.gaussian_dataset(size, dim=20, ambient_dim=40, std=0.1, seed=seed),
+    "aldi-gaussian-20-40-0.2": lambda size, seed: datasets.gaussian_dataset(size, dim=20, ambient_dim=40, std=0.2, seed=seed),
+    "aldi-gaussian-20-40-0.4": lambda size, seed: datasets.gaussian_dataset(size, dim=20, ambient_dim=40, std=0.4, seed=seed),
+    "aldi-gaussian-20-40-0.8": lambda size, seed: datasets.gaussian_dataset(size, dim=20, ambient_dim=40, std=0.8, seed=seed),
+    "aldi-gaussian_saw-1-3-02-11": lambda size, seed: datasets.gaussian_saw_dataset(size, dim=1, ambient_dim=3, std=0.2, n_peaks=11, seed=seed),
+    "aldi-gaussian_saw-10-15-0.2-11": lambda size, seed: datasets.gaussian_saw_dataset(size, dim=10, ambient_dim=15, std=0.2, n_peaks=11, seed=seed),
+    "aldi-gaussian_saw-10-16-0.2-11": lambda size, seed: datasets.gaussian_saw_dataset(size, dim=10, ambient_dim=16, std=0.2, n_peaks=11, seed=seed),
+    "aldi-gaussian_saw-10-17-0.2-11": lambda size, seed: datasets.gaussian_saw_dataset(size, dim=10, ambient_dim=17, std=0.2, n_peaks=11, seed=seed),
+    "aldi-gaussian_saw-10-18-0.2-11": lambda size, seed: datasets.gaussian_saw_dataset(size, dim=10, ambient_dim=18, std=0.2, n_peaks=11, seed=seed),
+    "aldi-gaussian_saw-10-20-0.2-11": lambda size, seed: datasets.gaussian_saw_dataset(size, dim=10, ambient_dim=20, std=0.2, n_peaks=11, seed=seed),
+    "aldi-gaussian_saw-10-30-0.2-11": lambda size, seed: datasets.gaussian_saw_dataset(size, dim=10, ambient_dim=30, std=0.2, n_peaks=11, seed=seed),
+    "aldi-gaussian_saw-15-15-0.2-11": lambda size, seed: datasets.gaussian_saw_dataset(size, dim=15, ambient_dim=15, std=0.2, n_peaks=11, seed=seed),
+    "aldi-gaussian_saw-15-16-0.2-11": lambda size, seed: datasets.gaussian_saw_dataset(size, dim=15, ambient_dim=16, std=0.2, n_peaks=11, seed=seed),
+    "aldi-gaussian_saw-15-17-0.2-11": lambda size, seed: datasets.gaussian_saw_dataset(size, dim=15, ambient_dim=17, std=0.2, n_peaks=11, seed=seed),
+    "aldi-gaussian_saw-15-18-0.2-11": lambda size, seed: datasets.gaussian_saw_dataset(size, dim=15, ambient_dim=18, std=0.2, n_peaks=11, seed=seed),
+    "aldi-gaussian_saw-15-20-0.2-11": lambda size, seed: datasets.gaussian_saw_dataset(size, dim=15, ambient_dim=20, std=0.2, n_peaks=11, seed=seed),
+    "aldi-gaussian_saw-15-30-0.2-11": lambda size, seed: datasets.gaussian_saw_dataset(size, dim=15, ambient_dim=30, std=0.2, n_peaks=11, seed=seed),
+    
     "uniform-1": lambda size, seed: datasets.uniform_N(1, size, seed=seed),
     "uniform-10": lambda size, seed: datasets.uniform_N(10, size, seed=seed),
     "uniform-12": lambda size, seed: datasets.uniform_N(12, size, seed=seed),
@@ -277,20 +310,34 @@ parser.add_argument(
     type=int,
     help="number of components in gaussian mixture"
 )
+
 args = parser.parse_args()
 
 not_in_filename = [
+        'covariance',
+        'k',
+        'device',
+        'layers',
+        'size',
+        'seed',
+        'hidden',
+        'lr',
+        'epochs',
+        'bs',
+        'blocks',
         'json_params',
         'gm_max_components',
         'neptune_token',
         'neptune_name',
         'ground_truth_const',
         'gdim']
+
 argname = "_".join([f"{k}:{v}" for k, v in vars(args).items() if not k in not_in_filename])
 
-report_filename = (
-    f"report_dim_estimate_{argname}.csv"
-)
+output_dir = Path(f"results/{args.algorithm}/{args.dataset}")
+output_dir.mkdir(parents=True, exist_ok=True)
+
+report_filename = output_dir / "report.csv"
 print(report_filename)
 
 if args.deltas is not None:
@@ -327,6 +374,7 @@ else:
 
 
 data = inputs[args.dataset](size=args.size, seed=args.seed)
+np.save(output_dir / "data", data)
 #data = normalize(data)
 #print(args)
 
@@ -378,6 +426,16 @@ elif args.algorithm == "corrdim":
     results = corr_dim(data)
 
 elif args.algorithm == "maf":
+
+    assert (args.size == 12000) or (args.size == 120000), "Other cases are unhandled now, sorry"
+    multiplier = 10 if args.size == 120000 else 1
+    train_start = 0 * multiplier
+    train_end =  10000 * multiplier
+    val_start =  10000 * multiplier
+    val_end =    11000 * multiplier
+    test_start = 11000 * multiplier
+    test_end =   12000 * multiplier
+    
     maf = LIDL(
         model_type="maf",
         device=args.device,
@@ -389,11 +447,24 @@ elif args.algorithm == "maf":
     print("maf", file=f)
     results = maf(
         deltas=deltas,
-        train_dataset=data,
-        test=data)
+        train_dataset=data[train_start:train_end],
+        val=data[val_start:val_end],
+        test=data[test_start:test_end],
+        # verbose=True,
+        log_dir=output_dir / "tb",
+        )
     #maf.save(f"{args.algorithm}_{args.dataset}")
 
 elif args.algorithm == "rqnsf":
+    assert (args.size == 12000) or (args.size == 120000), "Other cases are unhandled now, sorry"
+    multiplier = 10 if args.size == 120000 else 1
+    train_start = 0 * multiplier
+    train_end =  10000 * multiplier
+    val_start =  10000 * multiplier
+    val_end =    11000 * multiplier
+    test_start = 11000 * multiplier
+    test_end =   12000 * multiplier
+    
     rqnsf = LIDL(
         model_type="rqnsf",
         device=args.device,
@@ -405,8 +476,12 @@ elif args.algorithm == "rqnsf":
         num_blocks=args.blocks)
     results = rqnsf(
         deltas=deltas,
-        train_dataset=data,
-        test=data)
+        train_dataset=data[train_start:train_end],
+        val=data[val_start:val_end],
+        test=data[test_start:test_end],
+        # verbose=True,
+        log_dir=output_dir / "tb",
+        )
     print("rqnsf", file=f)
     #results = rqnsf.dims_on_deltas(deltas, epoch=best_epochs, total_dim=data.shape[1])
     #rqnsf.save(f"{args.algorithm}_{args.dataset}")

@@ -4,7 +4,7 @@ import numpy as np
 from scipy.spatial import distance_matrix
 from sklearn import linear_model
 from sklearn.neighbors import NearestNeighbors
-from tqdm import tqdm
+from tqdm.auto import tqdm
 
 from dimensions import (
     intrinsic_dim_sample_wise_double_mle,
@@ -59,7 +59,7 @@ class LIDL:
         else:
             raise ValueError(f"incorrect model type: {model_type}")
 
-    def __call__(self, deltas, train_dataset, test):
+    def __call__(self, deltas, train_dataset, val, test, verbose=False, log_dir=None):
         total_dim = train_dataset.shape[1]
         sort_deltas = np.argsort(np.array(deltas))
         lls = list()
@@ -67,7 +67,7 @@ class LIDL:
         tq = tqdm(deltas, position=0, leave=False, unit='delta')
         for delta in tq:
             tq.set_description(f"delta: {delta}")
-            ll, score = self.model(delta=delta, dataset=train_dataset, test=test)
+            ll, score = self.model(delta=delta, dataset=train_dataset, val=val, test=test, verbose=verbose, log_dir=log_dir / str(delta))
             lls.append(ll)
             losses.append(score)
         lls = np.array(lls)

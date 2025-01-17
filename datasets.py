@@ -3,6 +3,14 @@ import pandas as pd
 import sklearn
 from sklearn import datasets
 from sklearn.preprocessing import StandardScaler
+import pickle
+from pathlib import Path
+
+import torch
+from torch.utils.data import TensorDataset, DataLoader
+from torch.utils.data import DataLoader
+from torch.utils.data.dataset import Dataset
+from torchvision import transforms, datasets
 
 
 def sphere_dataset(
@@ -11,7 +19,7 @@ def sphere_dataset(
         ambient_dim: int,
         radius: float,
         seed=0,
-        ) -> np.array:
+) -> np.array:
     np.random.seed(seed)
     assert ambient_dim > dim
 
@@ -20,8 +28,9 @@ def sphere_dataset(
     lam = np.sqrt(np.sum(x ** 2, axis=1, keepdims=True))
     x = x / lam
     x *= radius
-    x_out[:,:dim+1] = x
+    x_out[:, :dim+1] = x
     return x_out
+
 
 def gaussian_dataset(
         N: int,
@@ -29,14 +38,15 @@ def gaussian_dataset(
         ambient_dim: int,
         std: float,
         seed=0,
-        ) -> np.array:
+) -> np.array:
     np.random.seed(seed)
     assert ambient_dim >= dim
 
     x_out = np.zeros((N, ambient_dim))
     x = np.random.normal(size=(N, dim)) * std
-    x_out[:,:dim] = x
+    x_out[:, :dim] = x
     return x_out
+
 
 def gaussian_saw_dataset(
         N: int,
@@ -45,17 +55,58 @@ def gaussian_saw_dataset(
         std: float,
         n_peaks: int,
         seed=0,
-        ):
+):
     np.random.seed(seed)
     assert ambient_dim >= dim
 
     x_out = np.zeros((N, ambient_dim))
     means = np.random.randint(low=0, high=n_peaks, size=N) / (n_peaks - 1)
     x = np.random.normal(size=(N, dim)) * std + means.reshape(N, 1)
-    
+
     # print(means.shape)
-    x_out[:,:dim] = x
+    x_out[:, :dim] = x
     return x_out
+
+
+def quantized_uniform(root_data_path, n_k) -> tuple[np.ndarray, np.ndarray]:
+
+    train_path = Path(root_data_path) / \
+        "quantized_uniform" / f"{n_k}" / "train"
+    test_path = Path(root_data_path) / "quantized_uniform" / f"{n_k}" / "test"
+
+    def load_subset(path):
+        train_data = np.load(path / "data.npy")
+        train_lid = np.load(path / "lid.npy")
+        train_coefficients = np.load(path / "coefficients.npy")
+        return (train_data, train_lid, train_coefficients)
+
+    train_data = load_subset(train_path)
+    test_data = load_subset(test_path)
+
+    return train_data, test_data
+
+
+def aldi_generic(root_data_path, benchmark_dir) -> tuple[np.ndarray, np.ndarray]:
+
+    train_path = Path(root_data_path) / benchmark_dir / "train"
+    val_path = Path(root_data_path) / benchmark_dir / "val"
+    test_path = Path(root_data_path) / benchmark_dir / "test"
+
+    def load_subset(path):
+        train_data = np.load(path / "dataset.npy")
+
+        # train_lid = np.load(path / "lid.npy")
+        # train_coefficients = np.load(path / "coefficients.npy")
+        return (train_data.reshape(train_data.shape[0], -1), )
+
+    train_data = load_subset(train_path)
+    val_data = load_subset(val_path)
+    test_data = load_subset(test_path)
+
+    def flatten_last_two_dims(self, x):
+        return x.view(x.shape[0], -1)
+
+    return train_data, val_data, test_data
 
 
 def normalize(data):
@@ -173,6 +224,7 @@ def lollipop_dataset(bs, seed=0):
     x[cs:, 1] = stick
     return x
 
+
 def lollipop_dataset_0(bs, seed=0):
     np.random.seed(seed)
     cs = int(0.94 * bs)
@@ -207,7 +259,6 @@ def lollipop_dataset_0_dense_head(bs, seed=0):
     x[cp:] = np.random.normal(loc=(-.5, -.5), scale=1e-3, size=(bs-cp, 2))
     x = np.concatenate([x, np.zeros((x.shape[0], 1))], axis=1)
     return x
-
 
 
 def uniform_helix_r3(bs, seed=0):
@@ -318,15 +369,17 @@ def sin_dens(bs, freq=5, offset=2.1, seed=0):
     def fun(x, y, freq, offset):
         return np.cos(freq * x) + np.cos(freq * y) + offset
     np.random.seed(seed)
-    sample = np.random.rand(10*bs, 3) * np.array([[2*np.pi, 2*np.pi, offset + 2]]) + np.array([[-np.pi, -np.pi, 0]])
+    sample = np.random.rand(
+        10*bs, 3) * np.array([[2*np.pi, 2*np.pi, offset + 2]]) + np.array([[-np.pi, -np.pi, 0]])
     resampled = np.array([[point[0], point[1]]
                           for point in sample
                           if point[2] < fun(point[0], point[1], freq, offset)
-                         ])
+                          ])
     assert len(resampled) >= bs
     resampled = resampled[:bs]
     resampled = np.concatenate([resampled, np.zeros_like(resampled)], axis=1)
     return resampled
+
 
 def csv_dataset(path):
     df = pd.read_csv(path, header=None, delim_whitespace=True)

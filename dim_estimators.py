@@ -4,6 +4,7 @@ import numpy as np
 from scipy.spatial import distance_matrix
 from sklearn import linear_model
 from sklearn.neighbors import NearestNeighbors
+import torch
 from tqdm.auto import tqdm
 
 from dimensions import (
@@ -67,7 +68,8 @@ class LIDL:
         tq = tqdm(deltas, position=0, leave=False, unit='delta')
         for delta in tq:
             tq.set_description(f"delta: {delta}")
-            ll, score = self.model(delta=delta, dataset=train_dataset, val=val, test=test, verbose=verbose, log_dir=log_dir / str(delta))
+            ll, score = self.model(delta=delta, dataset=train_dataset, val=val,
+                                   test=test, verbose=verbose, log_dir=log_dir / str(delta))
             lls.append(ll)
             losses.append(score)
         lls = np.array(lls)
@@ -76,12 +78,15 @@ class LIDL:
         lls = lls[sort_deltas]
         deltas = np.array(deltas)[sort_deltas]
 
+        torch.save(lls, log_dir.parent / "lls.torch")
+
         lls = lls.transpose()
         dims = list()
         for i in range(lls.shape[0]):
             good_inds = ~np.logical_or(np.isnan(lls[i]), np.isinf(lls[i]))
             if ~good_inds.all():
-                print(f"[WARNING] some log likelihoods are incorrect, deltas: {deltas}")
+                print(
+                    f"[WARNING] some log likelihoods are incorrect, deltas: {deltas}")
             ds = np.log(deltas[good_inds])
             ll = lls[i][good_inds]
             if ll.size < 2:

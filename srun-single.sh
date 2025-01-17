@@ -16,6 +16,6 @@ python run_experiments.py \
 	--algorithm $algorithm \
 	--size $size \
 	--seed $seed \
-	--deltas "0.009,0.01,0.011" \
+	--deltas $deltas \
 	--device cuda 
 # done

@@ -41,7 +41,44 @@ inputs = {
     "aldi-gaussian_saw-15-18-0.2-11": lambda size, seed: datasets.gaussian_saw_dataset(size, dim=15, ambient_dim=18, std=0.2, n_peaks=11, seed=seed),
     "aldi-gaussian_saw-15-20-0.2-11": lambda size, seed: datasets.gaussian_saw_dataset(size, dim=15, ambient_dim=20, std=0.2, n_peaks=11, seed=seed),
     "aldi-gaussian_saw-15-30-0.2-11": lambda size, seed: datasets.gaussian_saw_dataset(size, dim=15, ambient_dim=30, std=0.2, n_peaks=11, seed=seed),
-    
+    "quantized_uniform-3": lambda root_data_path: datasets.quantized_uniform(root_data_path, 3),
+    "quantized_uniform-5": lambda root_data_path: datasets.quantized_uniform(root_data_path, 5),
+    "quantized_uniform-9": lambda root_data_path: datasets.quantized_uniform(root_data_path, 9),
+    "quantized_uniform-17": lambda root_data_path: datasets.quantized_uniform(root_data_path, 17),
+    "quantized_uniform-33": lambda root_data_path: datasets.quantized_uniform(root_data_path, 33),
+    "quantized_uniform-65": lambda root_data_path: datasets.quantized_uniform(root_data_path, 65),
+    "quantized_uniform-129": lambda root_data_path: datasets.quantized_uniform(root_data_path, 129),
+    "quantized_uniform-257": lambda root_data_path: datasets.quantized_uniform(root_data_path, 257),
+
+    "e1/sampled_fmnist_step1": lambda root_data_path: datasets.aldi_generic(root_data_path, "e1_sampled_fmnist_step1"),
+    "e1/sampled_fmnist_step2": lambda root_data_path: datasets.aldi_generic(root_data_path, "e1_sampled_fmnist_step2"),
+    "e1/sampled_fmnist_step3": lambda root_data_path: datasets.aldi_generic(root_data_path, "e1_sampled_fmnist_step3"),
+    "e1/sampled_fmnist_step4": lambda root_data_path: datasets.aldi_generic(root_data_path, "e1_sampled_fmnist_step4"),
+    "e1/sampled_fmnist_step5": lambda root_data_path: datasets.aldi_generic(root_data_path, "e1_sampled_fmnist_step5"),
+    "e1/sampled_fmnist_step6": lambda root_data_path: datasets.aldi_generic(root_data_path, "e1_sampled_fmnist_step6"),
+    "e1/sampled_fmnist_step7": lambda root_data_path: datasets.aldi_generic(root_data_path, "e1_sampled_fmnist_step7"),
+    "e1/sampled_fmnist_step8": lambda root_data_path: datasets.aldi_generic(root_data_path, "e1_sampled_fmnist_step8"),
+    "e1/sampled_fmnist_step9": lambda root_data_path: datasets.aldi_generic(root_data_path, "e1_sampled_fmnist_step9"),
+    "e1/sampled_fmnist_step10": lambda root_data_path: datasets.aldi_generic(root_data_path, "e1_sampled_fmnist_step10"),
+    "e1/sampled_fmnist_step11": lambda root_data_path: datasets.aldi_generic(root_data_path, "e1_sampled_fmnist_step11"),
+    "e1/sampled_fmnist_step12": lambda root_data_path: datasets.aldi_generic(root_data_path, "e1_sampled_fmnist_step12"),
+    "e1/spiral_pca": lambda root_data_path: datasets.aldi_generic(root_data_path, "e1_spiral_pca"),
+    "e2/uniform_pca": lambda root_data_path: datasets.aldi_generic(root_data_path, "e2_uniform_pca"),
+    "e3/gaussian_pca": lambda root_data_path: datasets.aldi_generic(root_data_path, "e3_gaussian_pca"),
+    "e4/sphere_pca_radius025": lambda root_data_path: datasets.aldi_generic(root_data_path, "e4_sphere_pca_radius025"),
+    "e4/sphere_pca_radius050": lambda root_data_path: datasets.aldi_generic(root_data_path, "e4_sphere_pca_radius050"),
+    "e4/sphere_pca_radius100": lambda root_data_path: datasets.aldi_generic(root_data_path, "e4_sphere_pca_radius100"),
+    "e4/sphere_pca_radius200": lambda root_data_path: datasets.aldi_generic(root_data_path, "e4_sphere_pca_radius200"),
+    "e6/exp_pca": lambda root_data_path: datasets.aldi_generic(root_data_path, "e6_exp_pca"),
+    "e7/crescent_moon_pca": lambda root_data_path: datasets.aldi_generic(root_data_path, "e7_crescent_moon_radius3.0"),
+
+    "e2/arrows": lambda root_data_path: datasets.aldi_generic(root_data_path, "e2_arrows"),
+    "e5/padded_fmnist_adddim0": lambda root_data_path: datasets.aldi_generic(root_data_path, "e5_padded_fmnist_adddim0"),
+    "e5/padded_fmnist_adddim4": lambda root_data_path: datasets.aldi_generic(root_data_path, "e5_padded_fmnist_adddim4"),
+    "e5/padded_fmnist_adddim8": lambda root_data_path: datasets.aldi_generic(root_data_path, "e5_padded_fmnist_adddim8"),
+    "e5/upscaled_fmnist": lambda root_data_path: datasets.aldi_generic(root_data_path, "e5_upscaled_fmnist"),
+    #  "e4/sphere_pca_radius050" "e4/sphere_pca_radius100" "e4/sphere_pca_radius200"
+
     "uniform-1": lambda size, seed: datasets.uniform_N(1, size, seed=seed),
     "uniform-10": lambda size, seed: datasets.uniform_N(10, size, seed=seed),
     "uniform-12": lambda size, seed: datasets.uniform_N(12, size, seed=seed),
@@ -136,22 +173,22 @@ inputs = {
     "year": lambda size, seed: datasets.csv_dataset(
         # path to year_prediction_msd dataset here
         "~/datasets/year_prediction_msd.txt"
-    )
+    ),
 }
 
 skdim_algorithms = {
-        'skdim_corrint': skdim.id.CorrInt,
-        'skdim_danco': skdim.id.DANCo,
-        'skdim_ess': skdim.id.ESS,
-        'skdim_fishers': skdim.id.FisherS,
-        'skdim_knn': skdim.id.KNN,
-        'skdim_lpca': skdim.id.lPCA,
-        'skdim_mada': skdim.id.MADA,
-        'skdim_mind_ml':skdim.id.MiND_ML,
-        'skdim_mle':skdim.id.MLE,
-        'skdim_mom':skdim.id.MOM,
-        'skdim_tle': skdim.id.TLE,
-        'skdim_twonn': skdim.id.TwoNN,
+    'skdim_corrint': skdim.id.CorrInt,
+    'skdim_danco': skdim.id.DANCo,
+    'skdim_ess': skdim.id.ESS,
+    'skdim_fishers': skdim.id.FisherS,
+    'skdim_knn': skdim.id.KNN,
+    'skdim_lpca': skdim.id.lPCA,
+    'skdim_mada': skdim.id.MADA,
+    'skdim_mind_ml': skdim.id.MiND_ML,
+    'skdim_mle': skdim.id.MLE,
+    'skdim_mom': skdim.id.MOM,
+    'skdim_tle': skdim.id.TLE,
+    'skdim_twonn': skdim.id.TwoNN,
 }
 
 parser = argparse.ArgumentParser(description="LIDL experiments")
@@ -159,7 +196,8 @@ parser.add_argument(
     "--algorithm",
     default="mle",
     type=str,
-    choices=["mle", "mle-inv", "gm", "rqnsf", "maf", "corrdim"] + list(skdim_algorithms.keys()),
+    choices=["mle", "mle-inv", "gm", "rqnsf", "maf",
+             "corrdim"] + list(skdim_algorithms.keys()),
     help="name of the algorithm",
 )
 parser.add_argument(
@@ -285,7 +323,7 @@ parser.add_argument(
 
 parser.add_argument(
     "--bs",
-    default=256,
+    default=256,  # 256,
     type=int,
     help="batch_size"
 )
@@ -314,34 +352,36 @@ parser.add_argument(
 args = parser.parse_args()
 
 not_in_filename = [
-        'covariance',
-        'k',
-        'device',
-        'layers',
-        'size',
-        'seed',
-        'hidden',
-        'lr',
-        'epochs',
-        'bs',
-        'blocks',
-        'json_params',
-        'gm_max_components',
-        'neptune_token',
-        'neptune_name',
-        'ground_truth_const',
-        'gdim']
+    'covariance',
+    'k',
+    'device',
+    'layers',
+    'size',
+    'seed',
+    'hidden',
+    'lr',
+    'epochs',
+    'bs',
+    'blocks',
+    'json_params',
+    'gm_max_components',
+    'neptune_token',
+    'neptune_name',
+    'ground_truth_const',
+    'gdim']
 
-argname = "_".join([f"{k}:{v}" for k, v in vars(args).items() if not k in not_in_filename])
+argname = "_".join([f"{k}:{v}" for k, v in vars(
+    args).items() if not k in not_in_filename])
 
-output_dir = Path(f"results/{args.algorithm}/{args.dataset}")
+output_dir = Path(f"results/{args.algorithm}/{args.dataset}/{args.deltas}")
 output_dir.mkdir(parents=True, exist_ok=True)
 
 report_filename = output_dir / "report.csv"
 print(report_filename)
 
 if args.deltas is not None:
-    ldeltas = args.deltas.split(',')
+    # print(args.deltas)
+    ldeltas = args.deltas.split(';')
     deltas = list()
     assert len(ldeltas) >= 2
     for delta in ldeltas:
@@ -373,17 +413,16 @@ else:
     ]
 
 
-data = inputs[args.dataset](size=args.size, seed=args.seed)
-np.save(output_dir / "data", data)
-#data = normalize(data)
-#print(args)
+# data = normalize(data)
+# print(args)
 
 run = None
 if not (args.neptune_name is None or args.neptune_token is None):
     run = neptune.init(
-            project=args.neptune_name,
-            api_token=args.neptune_token,
-            source_files=['datasets.py', 'dim_estimators.py', 'likelihood_estimators.py', 'run_experiments.py', 's3.sh'],
+        project=args.neptune_name,
+        api_token=args.neptune_token,
+        source_files=['datasets.py', 'dim_estimators.py',
+                      'likelihood_estimators.py', 'run_experiments.py', 's3.sh'],
     )
     for key, value in vars(args).items():
         run[key] = value
@@ -391,6 +430,36 @@ if not (args.neptune_name is None or args.neptune_token is None):
 
 
 f = open(report_filename, "w")
+
+
+def get_train_val_test(args):
+    if args.dataset.startswith('e'):
+        data = inputs[args.dataset](
+            "/home/pt202342/projects/lid-benchmark-datasets/data/benchmarks_2024-12-09")
+        train_dataset = data[0][0]
+        val_dataset = data[1][0]
+        test_dataset = data[2][0]
+    else:
+        raise Exception("Support for this dropped.")
+        data = inputs[args.dataset](size=args.size, seed=args.seed)
+        np.save(output_dir / "data", data)
+        assert (args.size == 12000) or (args.size ==
+                                        120000), "Other cases are unhandled now, sorry"
+        multiplier = 10 if args.size == 120000 else 1
+        train_start = 0 * multiplier
+        train_end = 10000 * multiplier
+        val_start = 10000 * multiplier
+        val_end = 11000 * multiplier
+        test_start = 11000 * multiplier
+        test_end = 12000 * multiplier
+
+        train_dataset = data[train_start:train_end]
+        val_dataset = data[val_start:val_end]
+        test_dataset = data[test_start:test_end]
+
+    return train_dataset, val_dataset, test_dataset
+
+
 if args.algorithm in skdim_algorithms:
     print(args.algorithm, file=f)
     if args.json_params is not None:
@@ -411,7 +480,7 @@ if args.algorithm in skdim_algorithms:
     results = ldims
 
 elif args.algorithm == "gm":
-    #TODO fix arguments (convariance)
+    # TODO fix arguments (convariance)
     gm = LIDL(
         model_type="gm",
         runs=1,
@@ -419,7 +488,7 @@ elif args.algorithm == "gm":
         max_components=args.gm_max_components)
     print(f"gm", file=f)
     results = gm(deltas=deltas, train_dataset=data, test=data)
-    #gm.save(f"{args.dataset}")
+    # gm.save(f"{args.dataset}")
 
 elif args.algorithm == "corrdim":
     print("corrdim", file=f)
@@ -427,15 +496,8 @@ elif args.algorithm == "corrdim":
 
 elif args.algorithm == "maf":
 
-    assert (args.size == 12000) or (args.size == 120000), "Other cases are unhandled now, sorry"
-    multiplier = 10 if args.size == 120000 else 1
-    train_start = 0 * multiplier
-    train_end =  10000 * multiplier
-    val_start =  10000 * multiplier
-    val_end =    11000 * multiplier
-    test_start = 11000 * multiplier
-    test_end =   12000 * multiplier
-    
+    train_dataset, val_dataset, test_dataset = get_train_val_test(args)
+
     maf = LIDL(
         model_type="maf",
         device=args.device,
@@ -447,24 +509,17 @@ elif args.algorithm == "maf":
     print("maf", file=f)
     results = maf(
         deltas=deltas,
-        train_dataset=data[train_start:train_end],
-        val=data[val_start:val_end],
-        test=data[test_start:test_end],
+        train_dataset=train_dataset,
+        val=val_dataset,
+        test=test_dataset,
         # verbose=True,
         log_dir=output_dir / "tb",
-        )
-    #maf.save(f"{args.algorithm}_{args.dataset}")
+    )
+    # maf.save(f"{args.algorithm}_{args.dataset}")
 
 elif args.algorithm == "rqnsf":
-    assert (args.size == 12000) or (args.size == 120000), "Other cases are unhandled now, sorry"
-    multiplier = 10 if args.size == 120000 else 1
-    train_start = 0 * multiplier
-    train_end =  10000 * multiplier
-    val_start =  10000 * multiplier
-    val_end =    11000 * multiplier
-    test_start = 11000 * multiplier
-    test_end =   12000 * multiplier
-    
+    train_dataset, val_dataset, test_dataset = get_train_val_test(args)
+
     rqnsf = LIDL(
         model_type="rqnsf",
         device=args.device,
@@ -476,15 +531,15 @@ elif args.algorithm == "rqnsf":
         num_blocks=args.blocks)
     results = rqnsf(
         deltas=deltas,
-        train_dataset=data[train_start:train_end],
-        val=data[val_start:val_end],
-        test=data[test_start:test_end],
+        train_dataset=train_dataset,
+        val=val_dataset,
+        test=test_dataset,
         # verbose=True,
         log_dir=output_dir / "tb",
-        )
+    )
     print("rqnsf", file=f)
-    #results = rqnsf.dims_on_deltas(deltas, epoch=best_epochs, total_dim=data.shape[1])
-    #rqnsf.save(f"{args.algorithm}_{args.dataset}")
+    # results = rqnsf.dims_on_deltas(deltas, epoch=best_epochs, total_dim=data.shape[1])
+    # rqnsf.save(f"{args.algorithm}_{args.dataset}")
 
 elif args.algorithm == "mle":
     print(f"mle:k={args.k}", file=f)
@@ -502,11 +557,12 @@ if not (args.neptune_name is None or args.neptune_token is None):
     if args.ground_truth_const is not None:
         def mse(a, b):
             return ((a - b) ** 2).mean()
-        mse_val = mse(np.array(results), np.full(len(results), args.ground_truth_const))
+        mse_val = mse(np.array(results), np.full(
+            len(results), args.ground_truth_const))
         run['mse'] = mse_val
     if args.algorithm in skdim_algorithms and args.gdim:
         run['gdim'] = gdim
-    ## End measurring time
+    # End measurring time
     endtime = time.time()
     run['running_time'] = endtime - starttime
     run.stop()

@@ -17,6 +17,11 @@ from torch import optim
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 
+def get_gpu_mem():
+        t = torch.cuda.get_device_properties(0).total_memory
+        r = torch.cuda.memory_reserved(0)
+        a = torch.cuda.memory_allocated(0)
+        print(f"GPU: {r-a:.2f}")  # free inside reserved
 
 def split_dataset(dataset, val_size):
     train_size = int(round(dataset.shape[0] * (1 - val_size)))
@@ -99,6 +104,7 @@ class LLFlow:
         self.hidden = hidden
         self.batch_size = batch_size
         self.num_blocks = num_blocks
+        # print(f"batch_size: {batch_size}")
 
     def __create_model(self, features):
         base_dist = StandardNormal(shape=[features])
@@ -132,25 +138,28 @@ class LLFlow:
         flow.to(self.device)
 
         return flow
-
+    
+    
     # def run(self, data, samples, delta=0.05, test_size = 0.1, num_layers=10, lr=0.0001, epochs=10_000, device='cpu'):
     def __call__(self, delta, dataset, val, test, verbose=False, log_dir=None):
         # train, val = split_dataset(dataset, self.val_size)
         writer = SummaryWriter(log_dir=log_dir)
-
+        get_gpu_mem()
         train = dataset
         if test.shape[1] != dataset.shape[1]:
             raise ValueError(f"train and test datasets have different number of features: \
             train features: {dataset.shape[1]}, test features: {test.shape[1]}")
-
+        print(train.shape)
         flow = self.__create_model(train.shape[1])
+        # get_gpu_mem()
+        
         optimizer = optim.Adam(flow.parameters(), lr=self.lr)
-
+        # get_gpu_mem()
         train_tensor = torch.tensor(train, dtype=torch.float32)
         val_tensor = torch.tensor(val, dtype=torch.float32, device=self.device)
         test_tensor = torch.tensor(
             test, dtype=torch.float32, device=self.device)
-
+        # get_gpu_mem()
         # train_tensor = self.flatten_last_two_dims(train_tensor)
         # val_tensor = self.flatten_last_two_dims(val_tensor)
         # test_tensor = self.flatten_last_two_dims(test_tensor)
@@ -172,17 +181,26 @@ class LLFlow:
                     train_tensor, batch_size=self.batch_size), position=2, leave=False)
             else:
                 tq2 = DataLoader(train_tensor, batch_size=self.batch_size)
+            # get_gpu_mem()
             for x in tq2:
                 if verbose:
                     tq2.set_description("batch")
 
                 x = x + torch.randn_like(x) * delta
                 x = x.to(self.device)
+                # print(f"{x.shape}")
+                # get_gpu_mem()
                 optimizer.zero_grad()
                 loss = -flow.log_prob(inputs=x).mean()
                 loss.backward()
-                optimizer.step()
 
+                import gc
+                torch.cuda.empty_cache()
+                gc.collect()
+                # get_gpu_mem()
+                optimizer.step()
+                # get_gpu_mem()
+                # print("END STEP")
             with torch.no_grad():
                 # validation loss for early stopping
                 val_loss = -flow.log_prob(inputs=val_tensor).mean()

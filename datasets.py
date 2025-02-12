@@ -108,6 +108,52 @@ def aldi_generic(root_data_path, benchmark_dir) -> tuple[np.ndarray, np.ndarray]
 
     return train_data, val_data, test_data
 
+def aldi_coeff(root_data_path, benchmark_dir) -> tuple[np.ndarray, np.ndarray]:
+
+    benchmark_dir = benchmark_dir.replace("coeff_", "")
+    train_path = Path(root_data_path) / benchmark_dir / "train"
+    val_path = Path(root_data_path) / benchmark_dir / "val"
+    test_path = Path(root_data_path) / benchmark_dir / "test"
+
+    def load_subset(path):
+        train_data = np.load(path / "coefficients.npy")
+
+        # train_lid = np.load(path / "lid.npy")
+        # train_coefficients = np.load(path / "coefficients.npy")
+        return (train_data.reshape(train_data.shape[0], -1), ) 
+    train_data = load_subset(train_path)
+    val_data = load_subset(val_path)
+    test_data = load_subset(test_path)
+
+    def flatten_last_two_dims(self, x):
+        return x.view(x.shape[0], -1)
+
+    return train_data, val_data, test_data
+
+def aldi_wide_coeff(root_data_path, benchmark_dir) -> tuple[np.ndarray, np.ndarray]:
+
+    benchmark_dir = benchmark_dir.replace("wide_coeff_", "")
+    train_path = Path(root_data_path) / benchmark_dir / "train"
+    val_path = Path(root_data_path) / benchmark_dir / "val"
+    test_path = Path(root_data_path) / benchmark_dir / "test"
+
+    def load_subset(path):
+        coeffs = np.load(path / "coefficients.npy")
+        train_data = np.zeros([coeffs.shape[0], 784])
+        train_data[:, :30] = coeffs
+
+        # train_lid = np.load(path / "lid.npy")
+        # train_coefficients = np.load(path / "coefficients.npy")
+        return (train_data.reshape(train_data.shape[0], -1), ) 
+    train_data = load_subset(train_path)
+    val_data = load_subset(val_path)
+    test_data = load_subset(test_path)
+
+    def flatten_last_two_dims(self, x):
+        return x.view(x.shape[0], -1)
+
+    return train_data, val_data, test_data
+
 
 def normalize(data):
     data -= data.mean(axis=0)

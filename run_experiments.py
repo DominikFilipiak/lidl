@@ -62,6 +62,7 @@ inputs = {
     "e1/sampled_fmnist_step10": lambda root_data_path: datasets.aldi_generic(root_data_path, "e1_sampled_fmnist_step10"),
     "e1/sampled_fmnist_step11": lambda root_data_path: datasets.aldi_generic(root_data_path, "e1_sampled_fmnist_step11"),
     "e1/sampled_fmnist_step12": lambda root_data_path: datasets.aldi_generic(root_data_path, "e1_sampled_fmnist_step12"),
+    "e1/sampled_fmnist_step13": lambda root_data_path: datasets.aldi_generic(root_data_path, "e1_sampled_fmnist_step13"),
     "e1/spiral_pca": lambda root_data_path: datasets.aldi_generic(root_data_path, "e1_spiral_pca"),
     "e2/uniform_pca": lambda root_data_path: datasets.aldi_generic(root_data_path, "e2_uniform_pca"),
     "e3/gaussian_pca": lambda root_data_path: datasets.aldi_generic(root_data_path, "e3_gaussian_pca"),
@@ -77,6 +78,38 @@ inputs = {
     "e5/padded_fmnist_adddim4": lambda root_data_path: datasets.aldi_generic(root_data_path, "e5_padded_fmnist_adddim4"),
     "e5/padded_fmnist_adddim8": lambda root_data_path: datasets.aldi_generic(root_data_path, "e5_padded_fmnist_adddim8"),
     "e5/upscaled_fmnist": lambda root_data_path: datasets.aldi_generic(root_data_path, "e5_upscaled_fmnist"),
+    "e5/downscaled_fmnist": lambda root_data_path: datasets.aldi_generic(root_data_path, "e5_downscaled_fmnist"),
+    "e5/stretched_power4": lambda root_data_path: datasets.aldi_generic(root_data_path, "e5_stretched_power4"),
+    "e5/stretched_power0.25": lambda root_data_path: datasets.aldi_generic(root_data_path, "e5_stretched_power0.25"),
+    "e8/gaussian4_pca": lambda root_data_path: datasets.aldi_generic(root_data_path, "e8_gaussian4_pca"),
+    "e8/spaghetti_pca": lambda root_data_path: datasets.aldi_generic(root_data_path, "e8_spaghetti_pca"),
+    "e8/sphere4_pca": lambda root_data_path: datasets.aldi_generic(root_data_path, "e8_sphere4_pca"),
+
+    "coeff/e1/spiral_pca": lambda root_data_path: datasets.aldi_coeff(root_data_path, "coeff_e1_spiral_pca"),
+    "coeff/e2/uniform_pca": lambda root_data_path: datasets.aldi_coeff(root_data_path, "coeff_e2_uniform_pca"),
+    "coeff/e3/gaussian_pca": lambda root_data_path: datasets.aldi_coeff(root_data_path, "coeff_e3_gaussian_pca"),
+    "coeff/e4/sphere_pca_radius025": lambda root_data_path: datasets.aldi_coeff(root_data_path, "coeff_e4_sphere_pca_radius025"),
+    "coeff/e4/sphere_pca_radius050": lambda root_data_path: datasets.aldi_coeff(root_data_path, "coeff_e4_sphere_pca_radius050"),
+    "coeff/e4/sphere_pca_radius100": lambda root_data_path: datasets.aldi_coeff(root_data_path, "coeff_e4_sphere_pca_radius100"),
+    "coeff/e4/sphere_pca_radius200": lambda root_data_path: datasets.aldi_coeff(root_data_path, "coeff_e4_sphere_pca_radius200"),
+    "coeff/e6/exp_pca": lambda root_data_path: datasets.aldi_coeff(root_data_path, "coeff_e6_exp_pca"),
+    "coeff/e7/crescent_moon_pca": lambda root_data_path: datasets.aldi_coeff(root_data_path, "coeff_e7_crescent_moon_radius3.0"),
+    "coeff/e8/gaussian4_pca": lambda root_data_path: datasets.aldi_coeff(root_data_path, "coeff_e8_gaussian4_pca"),
+    "coeff/e8/spaghetti_pca": lambda root_data_path: datasets.aldi_coeff(root_data_path, "coeff_e8_spaghetti_pca"),
+    "coeff/e8/sphere4_pca": lambda root_data_path: datasets.aldi_coeff(root_data_path, "coeff_e8_sphere4_pca"),
+
+    "widecoeff/e1/spiral_pca": lambda root_data_path: datasets.aldi_wide_coeff(root_data_path, "wide_coeff_e1_spiral_pca"),
+    "widecoeff/e2/uniform_pca": lambda root_data_path: datasets.aldi_wide_coeff(root_data_path, "wide_coeff_e2_uniform_pca"),
+    "widecoeff/e3/gaussian_pca": lambda root_data_path: datasets.aldi_wide_coeff(root_data_path, "wide_coeff_e3_gaussian_pca"),
+    "widecoeff/e4/sphere_pca_radius025": lambda root_data_path: datasets.aldi_wide_coeff(root_data_path, "wide_coeff_e4_sphere_pca_radius025"),
+    "widecoeff/e4/sphere_pca_radius050": lambda root_data_path: datasets.aldi_wide_coeff(root_data_path, "wide_coeff_e4_sphere_pca_radius050"),
+    "widecoeff/e4/sphere_pca_radius100": lambda root_data_path: datasets.aldi_wide_coeff(root_data_path, "wide_coeff_e4_sphere_pca_radius100"),
+    "widecoeff/e4/sphere_pca_radius200": lambda root_data_path: datasets.aldi_wide_coeff(root_data_path, "wide_coeff_e4_sphere_pca_radius200"),
+    "widecoeff/e6/exp_pca": lambda root_data_path: datasets.aldi_wide_coeff(root_data_path, "wide_coeff_e6_exp_pca"),
+    "widecoeff/e7/crescent_moon_pca": lambda root_data_path: datasets.aldi_wide_coeff(root_data_path, "wide_coeff_e7_crescent_moon_radius3.0"),
+    "widecoeff/e8/gaussian4_pca": lambda root_data_path: datasets.aldi_wide_coeff(root_data_path, "wide_coeff_e8_gaussian4_pca"),
+    "widecoeff/e8/spaghetti_pca": lambda root_data_path: datasets.aldi_wide_coeff(root_data_path, "wide_coeff_e8_spaghetti_pca"),
+    "widecoeff/e8/sphere4_pca": lambda root_data_path: datasets.aldi_wide_coeff(root_data_path, "wide_coeff_e8_sphere4_pca"),
     #  "e4/sphere_pca_radius050" "e4/sphere_pca_radius100" "e4/sphere_pca_radius200"
 
     "uniform-1": lambda size, seed: datasets.uniform_N(1, size, seed=seed),
@@ -433,7 +466,7 @@ f = open(report_filename, "w")
 
 
 def get_train_val_test(args):
-    if args.dataset.startswith('e'):
+    if args.dataset.startswith('e') or args.dataset.startswith('coeff') or args.dataset.startswith('wide'):
         data = inputs[args.dataset](
             "/home/pt202342/projects/lid-benchmark-datasets/data/benchmarks_2024-12-09")
         train_dataset = data[0][0]
